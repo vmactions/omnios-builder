@@ -81,7 +81,7 @@ sleep 2
 $vmsh  processOpts  $osname  "$opts"
 
 
-$vmsh shutdownVM $osname
+
 
 while $vmsh isRunning $osname; do
   sleep 5
