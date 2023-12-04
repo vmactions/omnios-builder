@@ -135,7 +135,7 @@ $vmsh addSSHHost  $osname
 
 
 ssh $osname sh <<EOF
-echo 'StrictHostKeyChecking=accept-new' >.ssh/config
+echo 'StrictHostKeyChecking=no' >.ssh/config
 
 echo "Host host" >>.ssh/config
 echo "     HostName  192.168.122.1" >>.ssh/config
@@ -200,6 +200,8 @@ ssh $osname  "$VM_SHUTDOWN_CMD"
 sleep 5
 
 ###############################################################
+
+$vmsh shutdownVM $osname
 
 while $vmsh isRunning $osname; do
   sleep 5
