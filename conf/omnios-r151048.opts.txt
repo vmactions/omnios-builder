@@ -35,7 +35,7 @@ Welcome to | enter
 OmniOS configuration menu | string c; enter;string c; enter; enter
 
 
-OmniOS configuration menu | string s; string s; enter; enter; string h; enter
+OmniOS configuration menu | string s; string s; enter; enter; string h; enter; sleep 10
 
 
 
