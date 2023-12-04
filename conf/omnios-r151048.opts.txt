@@ -1,0 +1,42 @@
+
+
+US-English  | enter
+
+#Welcome to the OmniOS installer
+Welcome to |  enter
+
+
+Select disks for installation | space; sleep 1; enter
+
+
+
+Continue | enter; sleep 3; enter
+
+
+
+#Please identify a location so that time zone rules can be set correctly
+
+location  | enter
+
+
+#Is the above information OK
+information | enter
+
+
+Installation Complete | enter
+
+
+Welcome to | enter
+
+
+
+
+OmniOS configuration menu | string c; enter;string c; enter; enter
+
+
+OmniOS configuration menu | string s; string s; enter; enter; string h; enter
+
+
+
+
+
