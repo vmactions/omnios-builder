@@ -1,0 +1,53 @@
+name: "Build"
+on:
+  push:
+    branches:
+      - '*'
+    paths:
+      - '*.sh'
+      - '.github/workflows/build.yml'
+      - '*.txt'
+      - 'conf/*'
+      - 'hooks/*'
+  workflow_dispatch:
+
+  release:
+    types: [ created ]
+
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: ["12.4", "13.2", "14.0"]
+    runs-on: ubuntu-22.04
+    env:
+      SEC_VBOX : ${{ secrets.SEC_VBOX }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Creating Web console
+      uses: vmactions/cf-tunnel@v0
+      id: tunnel
+      with:
+        protocol: http
+        port: 8000
+    - run: |
+        bash build.sh conf/omnios-${{ matrix.os }}.conf
+    - name: Upload Release Asset
+      if: "contains(github.ref, 'refs/tags/')"
+      id: upload-release-asset
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        files: |
+          omnios-${{ matrix.os }}.qcow2.xz
+          omnios-${{ matrix.os }}-id_rsa.pub
+          omnios-${{ matrix.os }}-host.id_rsa
+
+
