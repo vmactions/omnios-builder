@@ -72,22 +72,20 @@ if ! $vmsh clearVM $osname; then
   echo "vm does not exists"
 fi
 
-if [ ! -e "$osname.qcow2.xz" ]; then
-  echo "Downloading qcow2 from: $VM_VHD_LINK"
-  wget -q -O $osname.qcow2.xz "$VM_VHD_LINK"
-
-fi
-
-if [ ! -e "$osname.qcow2" ]; then
-  xz -d -T 0 --verbose  "$osname.qcow2.xz"
-fi
+$vmsh createVM  $VM_ISO_LINK $osname $ostype $sshport
 
 
-$vmsh createVMFromVHD $osname $ostype $sshport
+sleep 2
+
+
+$vmsh  processOpts  $osname  "$opts"
 
 
 
 
+while $vmsh isRunning $osname; do
+  sleep 5
+done
 
 
 $vmsh startVM $osname
@@ -100,23 +98,11 @@ sleep 2
 
 
 waitForText "$VM_LOGIN_TAG"
+sleep 2
 
-sleep 3
+inputKeys "string root; enter"
 
-$vmsh enter  $osname
-sleep 1
-
-$vmsh enter  $osname
-sleep 1
-
-$vmsh enter  $osname
-sleep 1
-
-$vmsh enter  $osname
-sleep 1
-
-inputKeys "string root ; enter ; enter"
-
+sleep 2
 
 
 if [ ! -e ~/.ssh/id_rsa ] ; then 
@@ -135,7 +121,7 @@ echo "" >>enablessh.local
 
 
 echo >>enablessh.local
-echo >>enablessh.local
+echo "chmod 600 ~/.ssh/authorized_keys">>enablessh.local
 echo "exit">>enablessh.local
 echo >>enablessh.local
 
