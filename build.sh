@@ -98,9 +98,10 @@ sleep 2
 
 
 waitForText "$VM_LOGIN_TAG"
-sleep 2
 
-inputKeys "string root; enter; enter"
+sleep 3
+
+inputKeys "string root ; enter ; enter"
 
 sleep 2
 
