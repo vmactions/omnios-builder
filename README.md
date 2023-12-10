@@ -1,2 +1,4 @@
-# omnios-builder
-Builder for omnios vm
+
+v0.0.1
+
+
