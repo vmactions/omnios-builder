@@ -33,7 +33,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: ["r151046", "r151048"]
+        os: ["r151046", "r151048", "r151050"]
     runs-on: ubuntu-22.04
     env:
       SEC_VBOX : ${{ secrets.SEC_VBOX }}
