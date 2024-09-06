@@ -7,7 +7,7 @@ US-English  | enter
 Welcome to |  enter
 
 
-Select disks for installation | space; sleep 1; enter
+Select disk | space; sleep 1; enter
 
 
 
