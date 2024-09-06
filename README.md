@@ -2,7 +2,7 @@
 
 [![Build](https://github.com/vmactions/omnios-builder/actions/workflows/build.yml/badge.svg)](https://github.com/vmactions/omnios-builder/actions/workflows/build.yml)
 
-Latest: v0.0.2
+Latest: v0.0.3
 
 
 The image builder for [omnios-vm](https://github.com/vmactions/omnios-vm)
