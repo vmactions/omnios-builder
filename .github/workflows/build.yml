@@ -55,7 +55,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         files: |
-          omnios-${{ matrix.os }}.qcow2.xz
+          omnios-${{ matrix.os }}.qcow2.xz*
           omnios-${{ matrix.os }}-id_rsa.pub
           omnios-${{ matrix.os }}-host.id_rsa
 
