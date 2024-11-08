@@ -1,0 +1,50 @@
+#
+#
+
+US-English  | enter
+
+#Welcome to the OmniOS installer
+Welcome to |  enter
+
+
+root pool disks | string 1; sleep 1; enter; string 0; sleep 1; enter; sleep 1; enter;
+
+#Please enter a hostname or press RETURN if you want
+
+enter a hostname | enter
+
+#Please select a continent or ocean
+Please select a continent | string 2; enter
+
+
+#Please select a country or region
+
+country | string 49 ; enter
+
+#Please select one of the following time zone regions
+
+time zone | string 1; enter; sleep 1; string 1; enter
+
+
+#Press RETURN to go back to the menu
+
+RETURN | enter
+
+
+
+Welcome to | enter
+
+
+
+#OmniOS configuration menu
+
+# for dhcp 
+configuration menu | string 1; enter;string 2; enter; enter
+
+#enable ssh server
+configuration menu | string 4; enter; enter; string 4; enter; sleep 10
+
+
+
+
+
