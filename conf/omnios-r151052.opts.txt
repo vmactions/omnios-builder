@@ -12,7 +12,7 @@ Select disks using arrow keys and space bar | space; enter;
 
 
 
-customise aspects of the ZFS Root Pool | enter; enter
+customise aspects of the ZFS Root Pool | enter; enter;enter
 
 
 
