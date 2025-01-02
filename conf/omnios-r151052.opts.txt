@@ -41,7 +41,7 @@ Welcome to | enter
 configuration menu | string c; enter;string c; enter; enter
 
 #enable ssh server
-configuration menu | string ss; enter; enter;  string h; enter; sleep 10
+configuration menu | string s;string s; enter; enter;  string h; enter; sleep 10
 
 
 
