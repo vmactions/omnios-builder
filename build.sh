@@ -34,7 +34,7 @@ export VM_OCR
 export VM_DISK
 export VM_ARCH
 export VM_USE_CONSOLE_BUILD
-
+export VM_USE_CONSOLE_BUILD_SSH
 
 
 ##############################################################
@@ -107,11 +107,16 @@ if [ "$VM_ISO_LINK" ]; then
   fi
 
   while $vmsh isRunning $osname; do
-    sleep 5
+    sleep 20
   done
   if [ "$VM_USE_CONSOLE_BUILD" ]; then
     $vmsh closeConsole "$osname"
   fi
+
+  if [[ "$VM_ISO_LINK" == *"img" ]]; then
+    $vmsh detachIMG "$osname"
+  fi
+
 elif [ "$VM_VHD_LINK" ]; then
   #if the vm disk is already provided FreeBSD, just import it.
   if [ ! -e "$osname.qcow2" ]; then
@@ -181,6 +186,11 @@ restart_and_wait() {
 
 #start the installed vm, and initialize the ssh access:
 
+
+if [ -z "$VM_USE_CONSOLE_BUILD_SSH" ]; then
+  export VM_USE_CONSOLE_BUILD=""
+fi
+
 start_and_wait
 
 inputKeys "string root; enter; sleep 1;"
@@ -213,6 +223,11 @@ echo >>enablessh.local
 
 
 $vmsh inputFile $osname enablessh.local
+
+$vmsh screenText $osname
+
+
+export VM_USE_CONSOLE_BUILD=""
 
 
 ###############################################################
