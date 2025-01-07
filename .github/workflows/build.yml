@@ -32,6 +32,7 @@ concurrency:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os: ["r151046", "r151048", "r151050", "r151052"]
     runs-on: ubuntu-24.04
