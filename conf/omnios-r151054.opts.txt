@@ -1,0 +1,49 @@
+#
+#
+
+US-English  | enter
+
+#Welcome to the OmniOS installer
+Welcome to |  enter
+
+
+Select disks using arrow keys and space bar | space; enter;
+
+
+
+
+customise aspects of the ZFS Root Pool | enter; enter;enter
+
+#OmniOS | enter
+Omni | enter
+
+
+#Please identify a location so that time zone rules can be set correctly
+Please select a continent |  enter
+
+
+The following information has been given | enter
+
+Installation Complete | enter
+
+
+
+
+#Welcome to the OmniOS installer
+
+Welcome to | enter
+
+
+
+#OmniOS configuration menu
+
+# for dhcp 
+configuration menu | string c; enter;string c; enter; enter
+
+#enable ssh server
+configuration menu | string s;string s; enter; enter;  string h; enter; sleep 10
+
+
+
+
+
