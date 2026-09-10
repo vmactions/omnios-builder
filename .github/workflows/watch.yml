@@ -1,7 +1,11 @@
 name: "Watch upstream"
 
-# Track this OS upstream and land the confs for a new release, switching
-# them on in conf/all.release.conf (the hand-owned build membership).
+# Track this OS upstream and land the confs for each new release,
+# switching them on in conf/all.release.conf (the hand-owned build
+# membership). hooks/upstream_check.py reports one version per line --
+# the newest of every branch upstream still publishes -- so a run can
+# land a maintenance release (FreeBSD 14.5) and a newer major (15.2) in
+# the same commit, each modelled on its own branch's newest conf.
 # The generation layer does the rest: landing on main makes generate.yml
 # regenerate the tables / releases.json and re-render build.yml with the
 # new matrix, and that commit starts the build. See base-builder/watch.py.
@@ -57,7 +61,15 @@ jobs:
             # file rather than a shell string -- a multi-line "..." here
             # would take its indentation from this YAML block scalar.
             {
-              echo "Add confs for the new upstream release"
+              echo "Add confs for the new upstream release(s)"
+              # A run can land several branches at once (a maintenance
+              # release published after a newer major, e.g. FreeBSD 14.5
+              # beside 15.1), so name what actually landed.
+              if [ -s "${RUNNER_TEMP}/landed.txt" ]; then
+                echo
+                echo "Landed:"
+                sed 's/^/  /' "${RUNNER_TEMP}/landed.txt"
+              fi
               if [ -s "${RUNNER_TEMP}/allow-lines.txt" ]; then
                 echo
                 echo "Suggested anyvm/.github/coverage.allow lines:"
@@ -91,6 +103,12 @@ jobs:
       # notification issue that doubles as the to-do: close it when the
       # tag is cut. One issue per version (deduped by exact title), so a
       # re-run never posts twice.
+      #
+      # landed.txt carries ONE LINE PER LANDED VERSION ("<action>
+      # <version>"): since the detection hooks report every branch's
+      # newest, one run can land a maintenance release and a new major
+      # together, and each wants its own issue. The loop reads on fd 3
+      # so gh can never swallow the remaining lines from stdin.
       - name: Report a landed release
         if: success()
         env:
@@ -101,38 +119,40 @@ jobs:
             echo "nothing landed, no notification"
             exit 0
           fi
-          read -r action version < "${RUNNER_TEMP}/landed.txt"
-          TITLE="upstream release landed: ${version}"
-          export TITLE
-          num=$(gh issue list --state open --limit 100 \
-                  --json number,title \
-                  --jq "[.[] | select(.title == env.TITLE)] | .[0].number // empty")
-          if [ -n "$num" ]; then
-            echo "issue #${num} already open for ${version}"
-            exit 0
-          fi
-          {
-            if [ "$action" = "refresh" ]; then
-              echo "The watcher refreshed ${version}'s confs to the final"
-              echo "upstream media (the RC pins are gone) and the rebuild"
-              echo "has been triggered."
-            else
-              echo "The watcher landed conf(s) for upstream release ${version}"
-              echo "and the build matrix now includes it."
+          while read -r action version <&3; do
+            [ -n "$version" ] || continue
+            TITLE="upstream release landed: ${version}"
+            export TITLE
+            num=$(gh issue list --state open --limit 100 \
+                    --json number,title \
+                    --jq "[.[] | select(.title == env.TITLE)] | .[0].number // empty")
+            if [ -n "$num" ]; then
+              echo "issue #${num} already open for ${version}"
+              continue
             fi
-            echo
-            echo "Run: ${RUN_URL}"
-            echo
-            echo "Next step (the one remaining human action): once the"
-            echo "Build workflow is green, cut a new release tag on this"
-            echo "repo -- the images and releases.json upload themselves,"
-            echo "and the version bump bots propagate the tag to the"
-            echo "*-vm actions and anyvm the same night."
-            echo
-            echo "Close this issue once the tag is cut."
-          } > "${RUNNER_TEMP}/landed-issue.txt"
-          gh issue create --title "${TITLE}" \
-            --body-file "${RUNNER_TEMP}/landed-issue.txt"
+            {
+              if [ "$action" = "refresh" ]; then
+                echo "The watcher refreshed ${version}'s confs to the final"
+                echo "upstream media (the RC pins are gone) and the rebuild"
+                echo "has been triggered."
+              else
+                echo "The watcher landed conf(s) for upstream release ${version}"
+                echo "and the build matrix now includes it."
+              fi
+              echo
+              echo "Run: ${RUN_URL}"
+              echo
+              echo "Next step (the one remaining human action): once the"
+              echo "Build workflow is green, cut a new release tag on this"
+              echo "repo -- the images and releases.json upload themselves,"
+              echo "and the version bump bots propagate the tag to the"
+              echo "*-vm actions and anyvm the same night."
+              echo
+              echo "Close this issue once the tag is cut."
+            } > "${RUNNER_TEMP}/landed-issue.txt"
+            gh issue create --title "${TITLE}" \
+              --body-file "${RUNNER_TEMP}/landed-issue.txt"
+          done 3< "${RUNNER_TEMP}/landed.txt"
 
       # A nightly cron nobody reads is not a watcher. A failure here means
       # either the detection hook broke (upstream redesigned its page) or
